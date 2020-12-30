@@ -59,10 +59,13 @@ def main():
                 sys.exit()
             if event.type == KEYUP and event.key == K_SPACE:
                 generateBox(board)
-
+            # if down arrow is pressed accelerate all boxes to their
+            # final position            
         DISPLAYSURF.fill(GRAY)
         if time.time() - lastFallTime > 0.2:
             advanceBoxes(board)
+            # display a score for each line removed
+            # as the score increases increase the speed of the game
             clearFullLine(board)
             lastFallTime = time.time()
             print("step")
