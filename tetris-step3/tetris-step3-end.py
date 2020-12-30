@@ -50,8 +50,10 @@ def main():
     DISPLAYSURF = pygame.display.set_mode((WINDOW_W, WINDOW_H), 0, 32)
     pygame.display.set_caption('Tetris')
     FPSCLOCK = pygame.time.Clock()
+    BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
     board = getBlankBoard()
-    lastFallTime = time.time()    
+    lastFallTime = time.time() 
+    score = 0   
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -62,15 +64,16 @@ def main():
             # if down arrow is pressed accelerate all boxes to their
             # final position            
         DISPLAYSURF.fill(GRAY)
-        if time.time() - lastFallTime > 0.2:
+        if time.time() - lastFallTime > 0.25 - (score * 0.02):
             advanceBoxes(board)
             # display a score for each line removed
             # as the score increases increase the speed of the game
-            clearFullLine(board)
+            score += clearFullLine(board)
             lastFallTime = time.time()
             print("step")
         drawBoardFrame()
-        drawBoard(board)    
+        drawBoard(board) 
+        drawScore(score)   
         pygame.display.update()    
         FPSCLOCK.tick(15)                           
 
@@ -78,7 +81,10 @@ def convertToPixelCoords(boxx, boxy):
     return (XMARGIN + (boxx * BOX_SIZE)), (TOPMARGIN + (boxy * BOX_SIZE))
 
 def drawScore(score):
-    pass
+    scoreSurf = BASICFONT.render('Score: %s' % score, True, YELLOW)
+    scoreRect = scoreSurf.get_rect()
+    scoreRect.topleft = (WINDOW_W - 150, 20)
+    DISPLAYSURF.blit(scoreSurf, scoreRect)
 
 def accelerateBoxes(board):
     pass
@@ -100,6 +106,7 @@ def finishedFalling(board, x, y):
 
 def clearFullLine(board):
     y = BOARD_BLOCK_H - 1
+    removedLines = 0 
     while y >= 0:
         completed = True
         for x in range(BOARD_BLOCK_W):
@@ -108,8 +115,10 @@ def clearFullLine(board):
         if completed:
             for pullDownY in range(y, 0, -1):
                 for x in range(BOARD_BLOCK_W):                
-                    board[x][pullDownY] = board[x][pullDownY-1]
+                    board[x][pullDownY] = board[x][pullDownY-1] 
+            removedLines += 1
         y -= 1
+    return removedLines
 
 def advanceBoxes(board):
     moves = []
