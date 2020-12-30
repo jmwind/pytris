@@ -53,17 +53,9 @@ def main():
     board = getBlankBoard()
     lastFallTime = time.time()
     board[0][0] = random.randint(0, len(COLORS)-1)
-    board[0][1] = random.randint(0, len(COLORS)-1)
-    board[3][2] = random.randint(0, len(COLORS)-1)
-    board[4][1] = random.randint(0, len(COLORS)-1)
-    board[8][1] = random.randint(0, len(COLORS)-1)
-    board[5][7] = random.randint(0, len(COLORS)-1)
-    board[6][2] = random.randint(0, len(COLORS)-1)
-    board[0][2] = random.randint(0, len(COLORS)-1)
-    board[0][3] = random.randint(0, len(COLORS)-1)
+    board[1][1] = random.randint(0, len(COLORS)-1)
+    board[2][2] = random.randint(0, len(COLORS)-1)
     board[3][3] = random.randint(0, len(COLORS)-1)
-    board[3][4] = random.randint(0, len(COLORS)-1)
-    board[4][3] = random.randint(0, len(COLORS)-1)
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:

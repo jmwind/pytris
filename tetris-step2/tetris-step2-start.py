@@ -51,17 +51,15 @@ def main():
     pygame.display.set_caption('Tetris')
     FPSCLOCK = pygame.time.Clock()
     board = getBlankBoard()
-    lastFallTime = time.time()
-    board[0][0] = random.randint(0, len(COLORS)-1)
-    board[1][1] = random.randint(0, len(COLORS)-1)
-    board[2][2] = random.randint(0, len(COLORS)-1)
-    board[3][3] = random.randint(0, len(COLORS)-1)
+    lastFallTime = time.time()    
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        DISPLAYSURF.fill(GRAY)                            
+        DISPLAYSURF.fill(GRAY)
+        # if space bar is pressed, generate a random box on the board
+        # if there's a full line of boxes clear the line
         if time.time() - lastFallTime > 0.3:
             advanceBoxes(board)
             lastFallTime = time.time()
@@ -80,11 +78,17 @@ def drawBoard(board):
             if board[x][y] != BLANK:
                 drawBox(x, y, board[x][y])
 
+def generateBox(board):
+    pass
+
+def clearFullLine(board):
+    pass
+
 def advanceBoxes(board):
     moves = []
     for x in range(BOARD_BLOCK_W):
         for y in reversed(range(BOARD_BLOCK_H)):
-            if board[x][y] != BLANK and y+1 < BOARD_BLOCK_H and board[x][y+1] == BLANK::
+            if board[x][y] != BLANK and y+1 < BOARD_BLOCK_H:
                 moves.append((x,y))
     for (x,y) in moves:
         board[x][y+1] = board[x][y]

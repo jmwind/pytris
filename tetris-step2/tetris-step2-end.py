@@ -51,25 +51,27 @@ def main():
     pygame.display.set_caption('Tetris')
     FPSCLOCK = pygame.time.Clock()
     board = getBlankBoard()
-    lastFallTime = time.time()
-    board[0][0] = random.randint(0, len(COLORS)-1)
-    board[1][1] = random.randint(0, len(COLORS)-1)
-    board[2][2] = random.randint(0, len(COLORS)-1)
-    board[3][3] = random.randint(0, len(COLORS)-1)
+    lastFallTime = time.time()    
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        DISPLAYSURF.fill(GRAY)                            
-        if time.time() - lastFallTime > 0.3:
+            if event.type == KEYUP and event.key == K_SPACE:
+                generateBox(board)
+
+        DISPLAYSURF.fill(GRAY)
+        # if space bar is pressed, generate a random box on the board
+        # if there's a full line of boxes clear the line
+        if time.time() - lastFallTime > 0.2:
             advanceBoxes(board)
+            clearFullLine(board)
             lastFallTime = time.time()
             print("step")
         drawBoardFrame()
         drawBoard(board)    
         pygame.display.update()    
-        FPSCLOCK.tick(25)                           
+        FPSCLOCK.tick(15)                           
 
 def convertToPixelCoords(boxx, boxy):
     return (XMARGIN + (boxx * BOX_SIZE)), (TOPMARGIN + (boxy * BOX_SIZE))
@@ -80,11 +82,33 @@ def drawBoard(board):
             if board[x][y] != BLANK:
                 drawBox(x, y, board[x][y])
 
+def generateBox(board):
+    board[random.randint(0, BOARD_BLOCK_W-1)][0] = random.randint(0, len(COLORS)-1)
+
+def finishedFalling(board, x, y):
+    if y == BOARD_BLOCK_H - 1:
+        return True
+    elif board[x][y + 1] == BLANK:
+        return False    
+
+def clearFullLine(board):
+    y = BOARD_BLOCK_H - 1
+    while y >= 0:
+        completed = True
+        for x in range(BOARD_BLOCK_W):
+            if board[x][y] == BLANK or not finishedFalling(board, x, y):
+                completed = False
+        if completed:
+            for pullDownY in range(y, 0, -1):
+                for x in range(BOARD_BLOCK_W):                
+                    board[x][pullDownY] = board[x][pullDownY-1]
+        y -= 1
+
 def advanceBoxes(board):
     moves = []
     for x in range(BOARD_BLOCK_W):
         for y in reversed(range(BOARD_BLOCK_H)):
-            if board[x][y] != BLANK and y+1 < BOARD_BLOCK_H and board[x][y+1] == BLANK::
+            if board[x][y] != BLANK and y+1 < BOARD_BLOCK_H and board[x][y+1] == BLANK:
                 moves.append((x,y))
     for (x,y) in moves:
         board[x][y+1] = board[x][y]
