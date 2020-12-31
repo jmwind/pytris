@@ -61,16 +61,17 @@ def main():
                 sys.exit()
             if event.type == KEYUP and event.key == K_SPACE:
                 generateBox(board)
-            # if down arrow is pressed accelerate all boxes to their
-            # final position            
+            if event.type == KEYUP and event.key == K_DOWN:
+                accelerateBoxes(board)
+            if event.type == KEYUP and event.key == K_RIGHT:
+                moveBoxesX(board, 1)
+            if event.type == KEYUP and event.key == K_LEFT:
+                moveBoxesX(board, -1)        
         DISPLAYSURF.fill(GRAY)
         if time.time() - lastFallTime > 0.25 - (score * 0.02):
             advanceBoxes(board)
-            # display a score for each line removed
-            # as the score increases increase the speed of the game
             score += clearFullLine(board)
-            lastFallTime = time.time()
-            print("step")
+            lastFallTime = time.time()            
         drawBoardFrame()
         drawBoard(board) 
         drawScore(score)   
@@ -86,8 +87,28 @@ def drawScore(score):
     scoreRect.topleft = (WINDOW_W - 150, 20)
     DISPLAYSURF.blit(scoreSurf, scoreRect)
 
+def moveBoxesX(board, change):
+    moves = {}
+    for x in range(BOARD_BLOCK_W):
+        for y in reversed(range(BOARD_BLOCK_H)):
+            if board[x][y] != BLANK and not finishedFalling(board, x, y):                                             
+                nextX = x + change
+                if nextX < 0 or nextX > BOARD_BLOCK_W - 1:
+                    nextX = x
+                moves.update({(nextX,y): board[x][y]})
+                board[x][y] = BLANK
+    for coords, color in moves.items():
+        board[coords[0]][coords[1]] = color
+        
 def accelerateBoxes(board):
-    pass
+    for x in range(BOARD_BLOCK_W):
+        for y in reversed(range(BOARD_BLOCK_H)):
+            if board[x][y] != BLANK and not finishedFalling(board, x, y):                                             
+                for nextY in range(BOARD_BLOCK_H - 1, y, -1):
+                    if board[x][nextY] == BLANK:                        
+                        board[x][nextY] = board[x][y]
+                        board[x][y] = BLANK
+                        break
 
 def drawBoard(board):
     for x in range(BOARD_BLOCK_W):
@@ -99,10 +120,12 @@ def generateBox(board):
     board[random.randint(0, BOARD_BLOCK_W-1)][0] = random.randint(0, len(COLORS)-1)
 
 def finishedFalling(board, x, y):
-    if y == BOARD_BLOCK_H - 1:
-        return True
-    elif board[x][y + 1] == BLANK:
-        return False    
+    nextY = y + 1
+    if nextY > BOARD_BLOCK_H - 1:
+        nextY = y
+    if board[x][nextY] == BLANK:
+        return False   
+    return True
 
 def clearFullLine(board):
     y = BOARD_BLOCK_H - 1

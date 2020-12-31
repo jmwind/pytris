@@ -93,10 +93,12 @@ def generateBox(board):
     board[random.randint(0, BOARD_BLOCK_W-1)][0] = random.randint(0, len(COLORS)-1)
 
 def finishedFalling(board, x, y):
-    if y == BOARD_BLOCK_H - 1:
-        return True
-    elif board[x][y + 1] == BLANK:
-        return False    
+    nextY = y + 1
+    if nextY > BOARD_BLOCK_H - 1:
+        nextY = y
+    if board[x][nextY] == BLANK:
+        return False   
+    return True   
 
 def clearFullLine(board):
     y = BOARD_BLOCK_H - 1
