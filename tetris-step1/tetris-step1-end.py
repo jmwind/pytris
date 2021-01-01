@@ -84,7 +84,7 @@ def advanceBoxes(board):
     moves = []
     for x in range(BOARD_BLOCK_W):
         for y in reversed(range(BOARD_BLOCK_H)):
-            if board[x][y] != BLANK and y+1 < BOARD_BLOCK_H and board[x][y+1] == BLANK::
+            if board[x][y] != BLANK and y+1 < BOARD_BLOCK_H and board[x][y+1] == BLANK:
                 moves.append((x,y))
     for (x,y) in moves:
         board[x][y+1] = board[x][y]
